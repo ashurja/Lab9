@@ -54,8 +54,13 @@
     <button>Console Trace</button>
     <button>Trigger a Global Error</button>
   </section>
-
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
   <script>
+      window.TrackJS && TrackJS.install({ 
+      token: "64d59453680b40f28469baa76c01798d"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+    
     let calculateBtn = document.querySelector('#calculate');
     calculateBtn.addEventListener('click', () => {
       let output = document.querySelector('output');
@@ -63,10 +68,83 @@
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
       output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      class LazyError extends Error {
+      constructor(message) {
+        super(message); 
+        this.name = "LazyError"; 
+      }
+    }
+
+    if (output.innerHTML < 0) {
+      throw new LazyError("Output less than 0"); 
+    }
+
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+    const label = "Console Group Demo"; 
     // TODO - Make buttons functional
+    errorBtns[0].addEventListener("click", () => {
+      console.log("Console Log Demo"); 
+    });
+
+    errorBtns[1].addEventListener("click", () => {
+      console.error("Console Error Demo"); 
+    });
+
+    errorBtns[2].addEventListener("click", () => {
+      console.dir(document.head); 
+    });
+
+    errorBtns[3].addEventListener("click", () => {
+      console.dirxml(document); 
+    });
+
+    errorBtns[4].addEventListener("click", () => {
+      console.group(label); 
+    });
+
+    errorBtns[5].addEventListener("click", () => {
+      console.groupEnd(label);
+    });
+
+    errorBtns[6].addEventListener("click", () => {
+      console.table([        {
+          first:"firstNum",
+          second:"secondNum", 
+          third:"operator", 
+          fourth:"output",
+        }]
+    )});
+
+    errorBtns[7].addEventListener("click", () => {
+      console.time();
+    });
+
+    errorBtns[8].addEventListener("click", () => {
+      console.timeEnd();
+    });
+
+    errorBtns[9].addEventListener("click", () => {
+      console.trace();
+    });
+
+    errorBtns[10].addEventListener("click", () => {
+      TrackJS.track('Testing TrackJS!');
+    });
+
+    
+    try {
+      console.log(output); 
+    }
+    catch (err) {
+      alert(err.name); 
+      console.log("Looks like there's an error"); 
+    }
+    finally {
+      console.info("Entered the finally Block"); 
+    }
   </script>
 </body>
-</html>
+</html> 
